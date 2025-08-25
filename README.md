@@ -2,6 +2,8 @@
 
 A simple web-based tool for converting WhiteWind blog entries into the Leaflet publication format. This converter streamlines the migration process for users on the AT Protocol, transforming blog content, metadata, and themes from one service to another.
 
+***This is not at all guaranteed to be accurate. it's experimental right now.***
+
 ## How It Works
 
 The converter is a single-page web app that runs entirely in the browser, with no backend required.
