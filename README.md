@@ -4,7 +4,7 @@ A simple web-based tool for converting WhiteWind blog entries into the Leaflet p
 
 ## How It Works
 
-The converter is a single-page web app that runs entirely in the browser, with no backend required. The codebase is modularised into:
+The converter is a single-page web app that runs entirely in the browser, with no backend required.
 
 - `index.html` — the main page structure  
 - `styles.css` — styling for layout, theme, and components  
@@ -24,7 +24,7 @@ The process involves three main steps:
 ## Usage
 
 1.  Open `index.html` in a web browser.  
-2.  Fill out **Publication Setup** and **Theme Configuration**. You’ll need your DID and PDS domain (findable via [PDSls](https://pdslist.dev)).  
+2.  Fill out **Publication Setup** and **Theme Configuration**. You’ll need your DID and PDS domain (findable via [PDSls](https://pdsls.dev)).  
 3.  Paste your WhiteWind JSON entries into the text area. You can fetch this from your PDS endpoint:  
 
     ```
