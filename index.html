@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiteWind to Leaflet Converter</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍃 WhiteWind → Leaflet Converter</h1>
+            <p>Convert your WhiteWind blog entries to Leaflet publication format</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="step">
+                <h2><span class="step-number">1</span>Publication Setup</h2>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="pubName">Publication Name*</label>
+                        <input type="text" id="pubName" placeholder="My Awesome Blog" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="basePath">Base Path</label>
+                        <input type="url" id="basePath" placeholder="https://myblog.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pubDescription">Publication Description</label>
+                    <textarea id="pubDescription" placeholder="Describe your publication..."></textarea>
+                </div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="showInDiscover">Show in Discover</label>
+                        <select id="showInDiscover">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="showComments">Enable Comments</label>
+                        <select id="showComments">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <h2><span class="step-number">2</span>Theme Configuration</h2>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="primaryColor">Primary Color</label>
+                        <input type="color" id="primaryColor" value="#667eea">
+                    </div>
+                    <div class="form-group">
+                        <label for="backgroundColor">Background Color</label>
+                        <input type="color" id="backgroundColor" value="#ffffff">
+                    </div>
+                </div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="pageBackground">Page Background</label>
+                        <input type="color" id="pageBackground" value="#f8fafc">
+                    </div>
+                    <div class="form-group">
+                        <label for="showPageBg">Show Page Background</label>
+                        <select id="showPageBg">
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <h2><span class="step-number">3</span>WhiteWind Blog Entries</h2>
+                <div class="warning">
+                    <strong>Note:</strong> Paste a JSON array of your WhiteWind blog entries below. The converter will automatically handle markdown parsing, AT-URI conversion, and schema transformation for all entries.
+                </div>
+                <div class="form-group">
+                    <label for="whitewindJson">WhiteWind Entries JSON*</label>
+                    <textarea id="whitewindJson" class="textarea-large" placeholder='Paste your WhiteWind entries JSON array here...' required></textarea>
+                    <div class="example">
+                        Example: [{"content": "# Post 1\n\nContent...", "title": "My First Post"}, {"content": "# Post 2\n\nMore content...", "title": "My Second Post"}]
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="authorDid">Author DID*</label>
+                    <input type="text" id="authorDid" placeholder="did:plc:..." required>
+                    <div class="example">
+                        Format: did:plc:example123... or did:web:example.com
+                    </div>
+                </div>
+                
+                <button onclick="convertEntries()" id="convertBtn">🔄 Convert to Leaflet</button>
+            </div>
+            
+            <div class="step" id="outputSection" style="display: none;">
+                <h2><span class="step-number">4</span>Converted Output</h2>
+                <div class="success" id="successMessage" style="display: none;">
+                    ✅ Conversion completed successfully! Copy or download the JSON below.
+                </div>
+                <div class="output">
+                    <h3>Publication Record:</h3>
+                    <pre id="publicationOutput"></pre>
+                    <div class="copy-download-buttons">
+                        <button class="copy-button" onclick="copyToClipboard('publicationOutput')">📋 Copy Publication</button>
+                        <button class="download-button" onclick="downloadFile('publicationOutput', 'publication.json')">⬇️ Download Publication</button>
+                    </div>
+                </div>
+                <div class="output">
+                    <h3>Document Records:</h3>
+                    <pre id="documentOutput"></pre>
+                    <div class="copy-download-buttons">
+                        <button class="copy-button" onclick="copyToClipboard('documentOutput')">📋 Copy Documents</button>
+                        <button class="download-button" onclick="downloadFile('documentOutput', 'documents.json')">⬇️ Download Documents</button>
+                    </div>
+                </div>
+                <div class="output">
+                    <h3>Download as Zip:</h3>
+                    <p>Download all files (publication and documents) as a single ZIP archive, with files named `00.json` for the publication and `1.json`, `2.json`, etc., for each document.</p>
+                    <div class="copy-download-buttons">
+                        <button class="download-button" id="zipDownloadBtn" onclick="downloadZip()">⬇️ Download ZIP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="./script.js"></script>
+</body>
+</html>
