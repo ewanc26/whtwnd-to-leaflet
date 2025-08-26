@@ -1,0 +1,51 @@
+:root {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif, system-ui;
+}
+
+/* Default mono theme - dark mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #1a1a1a;
+        --text-color: #f0f0f0;
+        --header-footer-bg: #2a2a2a;
+        --button-bg: #4a4a4a;
+        --button-hover-bg: #6a6a6a;
+        --link-color: #9a9a9a;
+        --link-hover-color: #b0b0b0;
+        --card-bg: #2a2a2a;
+        --border-color: #3a3a3a;
+        --warning-bg: #2a1f0d;
+        --warning-border: #4a3318;
+        --warning-text: #d4a574;
+        --success-bg: #0d2a1f;
+        --success-border: #184a33;
+        --success-text: #74d4a5;
+        --input-bg: #2a2a2a;
+        --input-border: #4a4a4a;
+        --input-focus-border: #6a6a6a;
+    }
+}
+
+/* Default mono theme - light mode */
+@media (prefers-color-scheme: light) {
+    :root {
+        --background-color: #f0f0f0;
+        --text-color: #1a1a1a;
+        --header-footer-bg: #e0e0e0;
+        --button-bg: #b0b0b0;
+        --button-hover-bg: #9a9a9a;
+        --link-color: #6a6a6a;
+        --link-hover-color: #4a4a4a;
+        --card-bg: #e0e0e0;
+        --border-color: #d0d0d0;
+        --warning-bg: #fef3cd;
+        --warning-border: #fde68a;
+        --warning-text: #92400e;
+        --success-bg: #d1fae5;
+        --success-border: #a7f3d0;
+        --success-text: #065f46;
+        --input-bg: #ffffff;
+        --input-border: #d0d0d0;
+        --input-focus-border: #9a9a9a;
+    }
+}

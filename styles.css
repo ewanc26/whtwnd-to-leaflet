@@ -1,250 +1,314 @@
-/*
-         * General Styles
-         * --------------
-         * Sets up basic typography, colors, and layout for a clean, modern look.
-         */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-        
-        /*
-         * Section and Step Styles
-         * -----------------------
-         * Defines the layout and appearance of each step in the conversion process.
-         */
-        .main-content {
-            padding: 40px;
-        }
-        
-        .step {
-            margin-bottom: 40px;
-            padding: 30px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-        
-        .step:hover {
-            border-color: #667eea;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-        }
-        
-        .step h2 {
-            color: #2d3748;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .step-number {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-weight: bold;
-        }
-        
-        /*
-         * Form Element Styles
-         * -------------------
-         * Styles for input fields, text areas, and buttons.
-         */
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        input, textarea, select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .textarea-large {
-            min-height: 200px;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        /*
-         * Output and Message Styles
-         * -------------------------
-         * Styling for the output sections and user feedback messages.
-         */
-        .output {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
-        .output pre {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 20px;
-            border-radius: 6px;
-            overflow-x: auto;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .warning {
-            background: #fef3cd;
-            border: 1px solid #fde68a;
-            color: #92400e;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-        
-        .success {
-            background: #d1fae5;
-            border: 1px solid #a7f3d0;
-            color: #065f46;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-        
-        .copy-download-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .copy-button, .download-button {
-            background: #10b981;
-            font-size: 14px;
-            padding: 8px 16px;
-        }
-        
-        .download-button {
-            background: #3b82f6;
-        }
-        
-        .copy-button:hover, .download-button:hover {
-            background: #059669;
-        }
+@import "./variables.css";
 
-        .download-button:hover {
-            background: #2563eb;
-        }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
-        .example {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-family: monospace;
-            font-size: 12px;
-            color: #64748b;
-        }
-        
-        /* Responsive design for smaller screens */
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: var(--text-color);
+}
 
-            .copy-download-buttons {
-                flex-direction: column;
-            }
-        }
+body {
+    font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Container and layout */
+.container {
+    max-width: 70vw;
+    margin: 0 auto;
+    min-height: 100vh;
+    background-color: var(--background-color);
+}
+
+/* Header */
+.header {
+    background-color: var(--header-footer-bg);
+    padding: 2rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.header p {
+    opacity: 0.8;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+/* Main content */
+.main-content {
+    padding: 2rem;
+}
+
+/* Steps/sections */
+.step {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    transition: all 0.2s ease;
+}
+
+.step:hover {
+    border-color: var(--button-bg);
+}
+
+.step h2 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+.step-number {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Links */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--link-hover-color);
+}
+
+/* Form elements */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 0;
+    font-size: 1rem;
+    color: var(--text-color);
+    transition: border-color 0.2s ease;
+    font-family: inherit;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--input-focus-border);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.textarea-large {
+    min-height: 200px;
+}
+
+/* Buttons */
+button {
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+button:hover {
+    background-color: var(--button-hover-bg);
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-primary {
+    background-color: var(--button-bg);
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+}
+
+.btn-secondary {
+    background-color: var(--button-bg);
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Grid layout */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Output sections */
+.output-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.output-card pre {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    white-space: pre-wrap;
+}
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Messages */
+.warning {
+    background-color: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    color: var(--warning-text);
+    padding: 1rem;
+    border-radius: 0;
+    margin-bottom: 1.5rem;
+}
+
+.success {
+    background-color: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+    padding: 1rem;
+    border-radius: 0;
+    margin-bottom: 1.5rem;
+}
+
+.example {
+    background-color: var(--card-bg);
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    margin-top: 0.5rem;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--link-color);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--header-footer-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--button-bg);
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--button-hover-bg);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+        max-width: 100vw;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .step {
+        padding: 1rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons button {
+        width: 100%;
+    }
+}

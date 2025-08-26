@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhiteWind to Leaflet Converter</title>
+    <link rel="stylesheet" href="./variables.css">
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header class="header">
             <h1>🍃 WhiteWind → Leaflet Converter</h1>
             <p>Convert your WhiteWind blog entries to Leaflet publication format</p>
-        </div>
+        </header>
         
-        <div class="main-content">
-            <div class="step">
+        <main class="main-content">
+            <section class="step">
                 <h2><span class="step-number">1</span>Publication Setup</h2>
                 <div class="grid">
                     <div class="form-group">
@@ -23,7 +24,7 @@
                     </div>
                     <div class="form-group">
                         <label for="basePath">Base Path</label>
-                        <input type="url" id="basePath" placeholder="https://myblog.com">
+                        <input type="url" id="basePath" placeholder="myblog.com">
                     </div>
                 </div>
                 <div class="form-group">
@@ -46,9 +47,9 @@
                         </select>
                     </div>
                 </div>
-            </div>
+            </section>
             
-            <div class="step">
+            <section class="step">
                 <h2><span class="step-number">2</span>Theme Configuration</h2>
                 <div class="grid">
                     <div class="form-group">
@@ -73,9 +74,9 @@
                         </select>
                     </div>
                 </div>
-            </div>
+            </section>
             
-            <div class="step">
+            <section class="step">
                 <h2><span class="step-number">3</span>WhiteWind Blog Entries</h2>
                 <div class="warning">
                     <strong>Note:</strong> Paste a JSON array of your WhiteWind blog entries below. The converter will automatically handle markdown parsing, AT-URI conversion, and schema transformation for all entries.
@@ -96,39 +97,39 @@
                     </div>
                 </div>
                 
-                <button onclick="convertEntries()" id="convertBtn">🔄 Convert to Leaflet</button>
-            </div>
+                <button onclick="convertEntries()" id="convertBtn" class="btn-primary">🔄 Convert to Leaflet</button>
+            </section>
             
-            <div class="step" id="outputSection" style="display: none;">
+            <section class="step" id="outputSection" style="display: none;">
                 <h2><span class="step-number">4</span>Converted Output</h2>
                 <div class="success" id="successMessage" style="display: none;">
                     ✅ Conversion completed successfully! Copy or download the JSON below.
                 </div>
-                <div class="output">
+                <div class="output-card">
                     <h3>Publication Record:</h3>
                     <pre id="publicationOutput"></pre>
-                    <div class="copy-download-buttons">
-                        <button class="copy-button" onclick="copyToClipboard('publicationOutput')">📋 Copy Publication</button>
-                        <button class="download-button" onclick="downloadFile('publicationOutput', 'publication.json')">⬇️ Download Publication</button>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="copyToClipboard('publicationOutput')">📋 Copy Publication</button>
+                        <button class="btn-secondary" onclick="downloadFile('publicationOutput', 'publication.json')">⬇️ Download Publication</button>
                     </div>
                 </div>
-                <div class="output">
+                <div class="output-card">
                     <h3>Document Records:</h3>
                     <pre id="documentOutput"></pre>
-                    <div class="copy-download-buttons">
-                        <button class="copy-button" onclick="copyToClipboard('documentOutput')">📋 Copy Documents</button>
-                        <button class="download-button" onclick="downloadFile('documentOutput', 'documents.json')">⬇️ Download Documents</button>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="copyToClipboard('documentOutput')">📋 Copy Documents</button>
+                        <button class="btn-secondary" onclick="downloadFile('documentOutput', 'documents.json')">⬇️ Download Documents</button>
                     </div>
                 </div>
-                <div class="output">
+                <div class="output-card">
                     <h3>Download as Zip:</h3>
                     <p>Download all files (publication and documents) as a single ZIP archive, with files named `00.json` for the publication and `1.json`, `2.json`, etc., for each document.</p>
-                    <div class="copy-download-buttons">
-                        <button class="download-button" id="zipDownloadBtn" onclick="downloadZip()">⬇️ Download ZIP</button>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" id="zipDownloadBtn" onclick="downloadZip()">⬇️ Download ZIP</button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
