@@ -22,32 +22,38 @@ body {
     margin: 0 auto;
     min-height: 100vh;
     background-color: var(--background-color);
+
+    /* Sticky footer setup */
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    padding: 2rem;
+
+    /* Allow content to push footer down */
+    flex: 1;
 }
 
 /* Header */
-.header {
+header {
     background-color: var(--header-footer-bg);
     padding: 2rem 1rem;
     text-align: center;
     border-bottom: 1px solid var(--border-color);
 }
 
-.header h1 {
+header h1 {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
     color: var(--text-color);
 }
 
-.header p {
+header p {
     opacity: 0.8;
     font-size: 1.1rem;
     color: var(--text-color);
-}
-
-/* Main content */
-.main-content {
-    padding: 2rem;
 }
 
 /* Steps/sections */
@@ -279,6 +285,32 @@ button:disabled {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--button-hover-bg);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 1.5rem 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--header-footer-bg); /* match header background for consistency */
+    color: var(--text-color); /* same readable colour as rest of the page */
+    line-height: 1.6;
+}
+
+footer p + p {
+    margin-top: 0.25rem;
+}
+
+footer a {
+    color: var(--link-color); /* use the same link colour as main body */
+    font-weight: 500;
+}
+
+footer a:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
 }
 
 /* Responsive design */
