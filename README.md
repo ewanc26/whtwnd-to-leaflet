@@ -45,7 +45,7 @@ The process involves three main steps:
 | :--- | :--- | :--- |
 | **WhiteWind** | A blog platform built on the AT Protocol, focusing on minimalistic, fast blogging. | `github.com/whtwnd/whitewind-blog` |
 | **Leaflet** | A flexible AT Protocol publishing platform for blogs, magazines, and long-form content. | `github.com/hyperlink-academy/leaflet` |
-| **PDSls** | A tool to find DID and PDS domains for AT Protocol users. | `https://github.com/notjuliet/pdsls` |
+| **PDSls** | A tool to find DID and PDS domains for AT Protocol users. | `tangled.sh/did:plc:6q5daed5gutiyerimlrnojnz/pdsls` |
 
 ---
 
