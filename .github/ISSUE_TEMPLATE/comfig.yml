@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: WhiteWind Documentation
+    url: https://whtwnd.com
+    about: Official WhiteWind platform documentation and help
+  - name: Leaflet Documentation  
+    url: https://leaflet.pub
+    about: Official Leaflet platform documentation and help
+  - name: AT Protocol Documentation
+    url: https://atproto.com
+    about: AT Protocol technical documentation and specifications
+  - name: Project Discussions
+    url: https://github.com/ewanc26/whtwnd-to-leaflet/discussions
+    about: General discussions, ideas, and community questions
