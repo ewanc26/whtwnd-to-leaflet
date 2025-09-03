@@ -1,78 +1,81 @@
-# `whtwnd-to-leaflet`
+# whtwnd-to-leaflet
 
-A simple web-based tool for converting WhiteWind blog entries into the Leaflet publication format. This converter streamlines the migration process for users on the AT Protocol, transforming blog content, metadata, and themes from one service to another.
+A simple browser-based tool for converting WhiteWind blog entries into the Leaflet publication format. It helps migrate content, metadata, and themes from WhiteWind to Leaflet on the AT Protocol.
 
-***This is not at all guaranteed to be accurate. it's experimental right now.***
+⚠️ **Experimental** — output is not guaranteed to be fully accurate yet.
+
+---
 
 ## How It Works
 
-The converter is a single-page web app that runs entirely in the browser, with no backend required.
+The app is a single-page web tool (built with **SvelteKit + TypeScript + Tailwind** on Svelte 5) that runs entirely in the browser. No backend is required. It produces a Leaflet-compatible **publication record** plus one or more **document records** from your WhiteWind entries.
 
-The process involves three main steps:
+The process involves three steps:
 
-* **Publication Setup**: Provide basic information for your Leaflet publication, such as the name, description, and your AT Protocol DID. You can also configure preferences like enabling comments and whether your publication should appear in the Leaflet Discover feed.  
-* **Theme Configuration**: Customise the publication’s look with colour settings for the primary, background, and page background colours.  
-* **Entry Conversion**: Paste your WhiteWind blog entries JSON. The tool will:  
-  * **Parse Markdown** → Converts markdown into structured Leaflet document blocks (headers, text, blockquotes, code blocks, images, etc.).  
-  * **Convert AT-URIs** → Transforms WhiteWind blob URLs into standard `at://` URIs.  
-  * **Transform Schema** → Outputs two JSON files: one **publication record** and one or more **document records**.  
-# whtwnd-to-leaflet
+1. **Publication Setup**  
+   Provide publication details such as name, description, base path, and AT Protocol DID. Configure preferences like enabling comments and whether to appear in the Leaflet Discover feed.
 
-A small browser tool that converts WhiteWind blog entries into the Leaflet publication format.
+2. **Theme Configuration**  
+   Choose colours for the publication’s primary, background, and page background.
 
-This repository contains a SvelteKit + TypeScript + Tailwind project (Svelte 5). The app runs entirely in the browser and produces a Leaflet-compatible publication record plus one or more document records from your WhiteWind entries.
+3. **Entry Conversion**  
+   Paste a JSON export of WhiteWind entries (either an array or an object with `records`/`data`). The converter will:  
+   - **Parse Markdown** → transforms into Leaflet blocks (headers, text, blockquotes, code, images, horizontal rules).  
+   - **Convert AT-URIs** → changes WhiteWind blob/CID URLs into `at://` URIs where possible.  
+   - **Output JSON** → emits one publication record and document records (ZIP export supported).
 
-## How it works
-
-- Publication Setup — provide publication name, optional base path and description, and preferences.
-- Theme Configuration — pick primary, background and page background colours.
-- Entry Conversion — paste a JSON array of WhiteWind entries (or an object with `records`/`data` containing an array). The tool:
-  - parses markdown into Leaflet blocks (headers, text, blockquotes, code, images, horizontal rules),
-  - converts blob/CID URLs into `at://` URIs when possible,
-  - emits a publication JSON and document JSON records (ZIP export supported).
+---
 
 ## Usage
 
-Web usage:
+**Web app:**
 
-1. Fill out Publication Setup and Theme Configuration in the app UI.
-2. Paste your WhiteWind JSON entries into the text area. You can fetch this from your PDS endpoint:
+1. Fill out Publication Setup and Theme Configuration.  
+2. Paste your WhiteWind JSON entries into the text area. You can fetch them from your PDS with:
 
 ```
-https://[pds domain]/xrpc/com.atproto.repo.listRecords?repo=[did]&collection=com.whtwnd.blog.entry
-```
 
-3. Enter your Author DID.
-4. Click **Convert to Leaflet**.
+https\://\[pds domain]/xrpc/com.atproto.repo.listRecords?repo=\[did]\&collection=com.whtwnd.blog.entry
+
+````
+
+3. Enter your Author DID.  
+4. Click **Convert to Leaflet**.  
 5. Copy or download the generated JSON files, or use the ZIP export.
 
-Local development (SvelteKit)
+**Local development:**
 
 ```bash
 npm install
 npm run dev
-```
+````
 
-Open the URL printed by Vite (usually http://localhost:5173).
+Open the URL from Vite (usually `http://localhost:5173`).
 
-Build & preview
+**Build & preview:**
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Files of interest
+---
 
-- `src/routes/+page.svelte` — main UI and form handling
-- `src/lib/convert.ts` — conversion logic (TID generation, markdown → blocks, URL conversions)
-- `src/lib/styles.css`, `src/lib/variables.css` — styles and variables
-- `src/types/file-saver.d.ts` — small type declaration
+## Files of Interest
 
-## Development notes
+* `src/routes/+page.svelte` — main UI and form handling
+* `src/lib/convert.ts` — core conversion logic (TID generation, markdown → blocks, URL conversions)
+* `src/lib/styles.css`, `src/lib/variables.css` — styles and theme variables
+* `src/types/file-saver.d.ts` — small type declaration
 
-- The converter accepts either a JSON array of entries or an object with `records`/`data` arrays to support different export formats.
-- Inline rich-text facets (links, bold, italic, code) are extracted when possible and attached to text blocks.
+---
+
+## Development Notes
+
+* Supports JSON arrays of entries or objects with `records`/`data` arrays.
+* Inline rich-text facets (links, bold, italic, code) are extracted when possible and attached to text blocks.
+
+---
 
 ## License
 
@@ -80,4 +83,4 @@ Licensed under **GPL 3.0**. See `/LICENSE` for details.
 
 ---
 
-Project: https://github.com/ewanc26/whtwnd-to-leaflet
+**Project:** [ewanc26/whtwnd-to-leaflet](https://github.com/ewanc26/whtwnd-to-leaflet)
