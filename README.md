@@ -8,10 +8,6 @@ A simple web-based tool for converting WhiteWind blog entries into the Leaflet p
 
 The converter is a single-page web app that runs entirely in the browser, with no backend required.
 
-- `index.html` — the main page structure  
-- `styles.css` — styling for layout, theme, and components  
-- `script.js` — all conversion logic, markdown parsing, and export functionality  
-
 The process involves three main steps:
 
 * **Publication Setup**: Provide basic information for your Leaflet publication, such as the name, description, and your AT Protocol DID. You can also configure preferences like enabling comments and whether your publication should appear in the Leaflet Discover feed.  
