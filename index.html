@@ -2,31 +2,31 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WhiteWind to Leaflet Converter</title>
-    <link rel="stylesheet" href="./variables.css">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
-<header>
-    <h1>🍃 WhiteWind → Leaflet Converter</h1>
-    <p>Convert your WhiteWind blog entries to Leaflet publication format</p>
-</header>
-
 <body>
+    <header>
+        <h1>🍃 WhiteWind → Leaflet Converter</h1>
+        <p>Convert your WhiteWind blog entries to Leaflet publication format</p>
+    </header>
+
     <div class="container">
         <main class="main-content">
+            <!-- Step 1: Publication Setup -->
             <section class="step">
                 <h2><span class="step-number">1</span>Publication Setup</h2>
                 <div class="grid">
                     <div class="form-group">
                         <label for="pubName">Publication Name*</label>
-                        <input type="text" id="pubName" placeholder="My Awesome Blog" required>
+                        <input type="text" id="pubName" placeholder="My Awesome Blog" required />
                     </div>
                     <div class="form-group">
                         <label for="basePath">Base Path</label>
-                        <input type="url" id="basePath" placeholder="myblog.com">
+                        <input type="url" id="basePath" placeholder="myblog.com" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -51,22 +51,23 @@
                 </div>
             </section>
 
+            <!-- Step 2: Theme -->
             <section class="step">
                 <h2><span class="step-number">2</span>Theme Configuration</h2>
                 <div class="grid">
                     <div class="form-group">
                         <label for="primaryColor">Primary Color</label>
-                        <input type="color" id="primaryColor" value="#667eea">
+                        <input type="color" id="primaryColor" value="#667eea" />
                     </div>
                     <div class="form-group">
                         <label for="backgroundColor">Background Color</label>
-                        <input type="color" id="backgroundColor" value="#ffffff">
+                        <input type="color" id="backgroundColor" value="#ffffff" />
                     </div>
                 </div>
                 <div class="grid">
                     <div class="form-group">
                         <label for="pageBackground">Page Background</label>
-                        <input type="color" id="pageBackground" value="#f8fafc">
+                        <input type="color" id="pageBackground" value="#f8fafc" />
                     </div>
                     <div class="form-group">
                         <label for="showPageBg">Show Page Background</label>
@@ -78,6 +79,7 @@
                 </div>
             </section>
 
+            <!-- Step 3: Blog entries -->
             <section class="step">
                 <h2><span class="step-number">3</span>WhiteWind Blog Entries</h2>
                 <div class="warning">
@@ -93,70 +95,54 @@
                         2\n\nMore content...", "title": "My Second Post"}]
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="authorDid">Author DID*</label>
-                    <input type="text" id="authorDid" placeholder="did:plc:..." required>
-                    <div class="example">
-                        Format: did:plc:example123... or did:web:example.com
-                    </div>
+                    <input type="text" id="authorDid" placeholder="did:plc:..." required />
+                    <div class="example">Format: did:plc:example123... or did:web:example.com</div>
                 </div>
-
                 <button onclick="convertEntries()" id="convertBtn" class="btn-primary">🔄 Convert to Leaflet</button>
             </section>
 
+            <!-- Step 4: Output -->
             <section class="step" id="outputSection" style="display: none;">
-                <h2><span class="step-number">4</span>Converted Output</h2>
+                <h2><span class="step-number">4</span>Conversion Results</h2>
                 <div class="success" id="successMessage" style="display: none;">
-                    ✅ Conversion completed successfully! Copy or download the JSON below.
+                    ✅ Conversion completed successfully!
+                </div>
+                <div class="download-section">
+                    <h3>📦 Download Your Converted Files</h3>
+                    <p>Download all files as a ZIP archive with the publication record as <code>00.json</code> and each
+                        document as <code>1.json</code>, <code>2.json</code>, etc.</p>
+                    <button class="btn-secondary" id="zipDownloadBtn" onclick="downloadZip()">⬇️ Download ZIP
+                        Archive</button>
                 </div>
                 <div class="output-card">
-                    <h3>Publication Record:</h3>
+                    <h3>Publication Record Preview:</h3>
                     <pre id="publicationOutput"></pre>
-                    <div class="action-buttons">
-                        <button class="btn-secondary" onclick="copyToClipboard('publicationOutput')">📋 Copy
-                            Publication</button>
-                        <button class="btn-secondary" onclick="downloadFile('publicationOutput', 'publication.json')">⬇️
-                            Download Publication</button>
-                    </div>
                 </div>
                 <div class="output-card">
-                    <h3>Document Records:</h3>
+                    <h3>Document Records Preview:</h3>
                     <pre id="documentOutput"></pre>
-                    <div class="action-buttons">
-                        <button class="btn-secondary" onclick="copyToClipboard('documentOutput')">📋 Copy
-                            Documents</button>
-                        <button class="btn-secondary" onclick="downloadFile('documentOutput', 'documents.json')">⬇️
-                            Download Documents</button>
-                    </div>
-                </div>
-                <div class="output-card">
-                    <h3>Download as Zip:</h3>
-                    <p>Download all files (publication and documents) as a single ZIP archive, with files named
-                        `00.json` for the publication and `1.json`, `2.json`, etc., for each document.</p>
-                    <div class="action-buttons">
-                        <button class="btn-secondary" id="zipDownloadBtn" onclick="downloadZip()">⬇️ Download
-                            ZIP</button>
-                    </div>
                 </div>
             </section>
         </main>
     </div>
 
+    <footer>
+        <p>
+            Built with 🍃 by <a href="https://ewancroft.uk" target="_blank" rel="noopener">Ewan</a> •
+            <a href="https://github.com/ewanc26/whtwnd-to-leaflet" target="_blank" rel="noopener">Source Code</a>
+            (GPL-3.0)
+        </p>
+        <p>
+            Not affiliated with <a href="https://whtwnd.com" target="_blank" rel="noopener">WhiteWind</a> or
+            <a href="https://leaflet.pub" target="_blank" rel="noopener">Leaflet</a>.
+        </p>
+    </footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="./script.js"></script>
+    <script src="script.js"></script>
 </body>
-
-<footer>
-    <p>
-        Built with 🍃 by <a href="https://ewancroft.uk" target="_blank" rel="noopener">Ewan</a> • 
-        <a href="https://github.com/ewanc26/whtwnd-to-leaflet" target="_blank" rel="noopener">Source Code</a> (GPL-3.0)
-    </p>
-    <p>
-        Not affiliated with <a href="https://whtwnd.com" target="_blank" rel="noopener">WhiteWind</a> or 
-        <a href="https://leaflet.pub" target="_blank" rel="noopener">Leaflet</a>.
-    </p>
-</footer>
 
 </html>
