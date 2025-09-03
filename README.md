@@ -20,47 +20,63 @@ The process involves three main steps:
   * **Parse Markdown** → Converts markdown into structured Leaflet document blocks (headers, text, blockquotes, code blocks, images, etc.).  
   * **Convert AT-URIs** → Transforms WhiteWind blob URLs into standard `at://` URIs.  
   * **Transform Schema** → Outputs two JSON files: one **publication record** and one or more **document records**.  
+# whtwnd-to-leaflet
 
----
+A small browser tool that converts WhiteWind blog entries into the Leaflet publication format.
+
+This repository contains a SvelteKit + TypeScript + Tailwind project (Svelte 5). The app runs entirely in the browser and produces a Leaflet-compatible publication record plus one or more document records from your WhiteWind entries.
+
+## How it works
+
+- Publication Setup — provide publication name, optional base path and description, and preferences.
+- Theme Configuration — pick primary, background and page background colours.
+- Entry Conversion — paste a JSON array of WhiteWind entries (or an object with `records`/`data` containing an array). The tool:
+  - parses markdown into Leaflet blocks (headers, text, blockquotes, code, images, horizontal rules),
+  - converts blob/CID URLs into `at://` URIs when possible,
+  - emits a publication JSON and document JSON records (ZIP export supported).
 
 ## Usage
 
-1.  Open `index.html` in a web browser.  
-2.  Fill out **Publication Setup** and **Theme Configuration**. You’ll need your DID and PDS domain (findable via [PDSls](https://pdsls.dev)).  
-3.  Paste your WhiteWind JSON entries into the text area. You can fetch this from your PDS endpoint:  
+Web usage:
 
-    ```
-    https://[pds domain]/xrpc/com.atproto.repo.listRecords?repo=[did]&collection=com.whtwnd.blog.entry
-    ```
+1. Fill out Publication Setup and Theme Configuration in the app UI.
+2. Paste your WhiteWind JSON entries into the text area. You can fetch this from your PDS endpoint:
 
-4.  Enter your Author DID.  
-5.  Click **Convert to Leaflet**.  
-6.  Copy/download the generated JSON files individually or grab them all at once in a ZIP.  
+```
+https://[pds domain]/xrpc/com.atproto.repo.listRecords?repo=[did]&collection=com.whtwnd.blog.entry
+```
 
----
+3. Enter your Author DID.
+4. Click **Convert to Leaflet**.
+5. Copy or download the generated JSON files, or use the ZIP export.
 
-## About the Services
+Local development (SvelteKit)
 
-| Service | Description | GitHub Page |
-| :--- | :--- | :--- |
-| **WhiteWind** | A blog platform built on the AT Protocol, focusing on minimalistic, fast blogging. | `github.com/whtwnd/whitewind-blog` |
-| **Leaflet** | A flexible AT Protocol publishing platform for blogs, magazines, and long-form content. | `github.com/hyperlink-academy/leaflet` |
-| **PDSls** | A tool to find DID and PDS domains for AT Protocol users. | `tangled.sh/did:plc:6q5daed5gutiyerimlrnojnz/pdsls` |
+```bash
+npm install
+npm run dev
+```
 
----
+Open the URL printed by Vite (usually http://localhost:5173).
 
-## Development
+Build & preview
 
-This project is built with plain **HTML, CSS, and JavaScript**.  
+```bash
+npm run build
+npm run preview
+```
 
-Key functions include:  
+## Files of interest
 
-* **`generateTID()`** → Generates unique timestamp-based IDs.  
-* **`hexToRgb()`** → Converts hex colour codes into RGB objects for Leaflet themes.  
-* **`convertBlobUrlToAtUri()`** → Converts WhiteWind blob URLs to `at://` format.  
-* **`parseMarkdownToBlocks()`** → Breaks down markdown into Leaflet-compatible content blocks.  
+- `src/routes/+page.svelte` — main UI and form handling
+- `src/lib/convert.ts` — conversion logic (TID generation, markdown → blocks, URL conversions)
+- `src/lib/styles.css`, `src/lib/variables.css` — styles and variables
+- `src/types/file-saver.d.ts` — small type declaration
 
----
+## Development notes
+
+- The converter accepts either a JSON array of entries or an object with `records`/`data` arrays to support different export formats.
+- Inline rich-text facets (links, bold, italic, code) are extracted when possible and attached to text blocks.
 
 ## License
 
@@ -68,6 +84,4 @@ Licensed under **GPL 3.0**. See `/LICENSE` for details.
 
 ---
 
-## Project Page
-
-GitHub: `https://github.com/ewanc26/whtwnd-to-leaflet`  
+Project: https://github.com/ewanc26/whtwnd-to-leaflet

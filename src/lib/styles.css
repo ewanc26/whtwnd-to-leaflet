@@ -1,0 +1,346 @@
+@import "./variables.css";
+
+/* Reset and base styles */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	color: var(--text-color);
+}
+
+body {
+	font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+	background-color: var(--background-color);
+	color: var(--text-color);
+	line-height: 1.6;
+	min-height: 100vh;
+}
+
+/* Container and layout */
+.container {
+	max-width: 70vw;
+	margin: 0 auto;
+	min-height: 100vh;
+	background-color: var(--background-color);
+
+	/* Sticky footer setup */
+	display: flex;
+	flex-direction: column;
+}
+
+.main-content {
+	padding: 2rem;
+
+	/* Allow content to push footer down */
+	flex: 1;
+}
+
+/* Header */
+header {
+	background-color: var(--header-footer-bg);
+	padding: 2rem 1rem;
+	text-align: center;
+	border-bottom: 1px solid var(--border-color);
+}
+
+header h1 {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+	color: var(--text-color);
+}
+
+header p {
+	opacity: 0.8;
+	font-size: 1.1rem;
+	color: var(--text-color);
+}
+
+/* Steps/sections */
+.step {
+	margin-bottom: 2rem;
+	padding: 1.5rem;
+	background-color: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 0;
+	transition: all 0.2s ease;
+}
+
+.step:hover {
+	border-color: var(--button-bg);
+}
+
+.step h2 {
+	color: var(--text-color);
+	margin-bottom: 1rem;
+	font-size: 1.5rem;
+	display: flex;
+	align-items: center;
+	font-weight: 600;
+}
+
+.step-number {
+	background-color: var(--button-bg);
+	color: var(--text-color);
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 1rem;
+	font-weight: bold;
+	font-size: 0.9rem;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+	color: var(--text-color);
+	line-height: 1.3;
+}
+
+h1 {
+	font-size: 2.5rem;
+	font-weight: 700;
+}
+
+h2 {
+	font-size: 2rem;
+	font-weight: 600;
+}
+
+h3 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+}
+
+/* Links */
+a {
+	color: var(--link-color);
+	text-decoration: none;
+	transition: color 0.2s ease;
+}
+
+a:hover {
+	color: var(--link-hover-color);
+}
+
+/* Form elements */
+.form-group {
+	margin-bottom: 1.5rem;
+}
+
+label {
+	display: block;
+	margin-bottom: 0.5rem;
+	font-weight: 600;
+	color: var(--text-color);
+}
+
+input, textarea, select {
+	width: 100%;
+	padding: 0.75rem;
+	background-color: var(--input-bg);
+	border: 1px solid var(--input-border);
+	border-radius: 0;
+	font-size: 1rem;
+	color: var(--text-color);
+	transition: border-color 0.2s ease;
+	font-family: inherit;
+}
+
+input:focus, textarea:focus, select:focus {
+	outline: none;
+	border-color: var(--input-focus-border);
+}
+
+textarea {
+	min-height: 120px;
+	resize: vertical;
+}
+
+.textarea-large {
+	min-height: 200px;
+}
+
+/* Buttons */
+button {
+	background-color: var(--button-bg);
+	color: var(--text-color);
+	border: none;
+	padding: 0.75rem 1.5rem;
+	border-radius: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-family: inherit;
+}
+
+button:hover {
+	background-color: var(--button-hover-bg);
+	transform: translateY(-1px);
+}
+
+button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.btn-primary {
+	background-color: var(--button-bg);
+	font-size: 1.1rem;
+	padding: 1rem 2rem;
+}
+
+.btn-secondary {
+	background-color: var(--button-bg);
+	font-size: 0.9rem;
+	padding: 0.5rem 1rem;
+}
+
+/* Grid layout */
+.grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1.5rem;
+}
+
+/* Output sections */
+.output-card {
+	background-color: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 0;
+	padding: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+.output-card pre {
+	background-color: var(--background-color);
+	color: var(--text-color);
+	padding: 1rem;
+	border: 1px solid var(--border-color);
+	border-radius: 0;
+	overflow-x: auto;
+	font-size: 0.9rem;
+	line-height: 1.4;
+	font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+	white-space: pre-wrap;
+}
+
+/* Action buttons */
+.action-buttons {
+	display: flex;
+	gap: 0.75rem;
+	margin-top: 1rem;
+	flex-wrap: wrap;
+}
+
+/* Messages */
+.warning {
+	background-color: var(--warning-bg);
+	border: 1px solid var(--warning-border);
+	color: var(--warning-text);
+	padding: 1rem;
+	border-radius: 0;
+	margin-bottom: 1.5rem;
+}
+
+.success {
+	background-color: var(--success-bg);
+	border: 1px solid var(--success-border);
+	color: var(--success-text);
+	padding: 1rem;
+	border-radius: 0;
+	margin-bottom: 1.5rem;
+}
+
+.example {
+	background-color: var(--card-bg);
+	padding: 0.75rem;
+	border: 1px solid var(--border-color);
+	border-radius: 0;
+	margin-top: 0.5rem;
+	font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+	font-size: 0.8rem;
+	color: var(--link-color);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--header-footer-bg);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--button-bg);
+	border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--button-hover-bg);
+}
+
+/* Footer */
+footer {
+	text-align: center;
+	font-size: 0.9rem;
+	padding: 1.5rem 1rem;
+	margin-top: 2rem;
+	border-top: 1px solid var(--border-color);
+	background: var(--header-footer-bg); /* match header background for consistency */
+	color: var(--text-color); /* same readable colour as rest of the page */
+	line-height: 1.6;
+}
+
+footer p + p {
+	margin-top: 0.25rem;
+}
+
+footer a {
+	color: var(--link-color); /* use the same link colour as main body */
+	font-weight: 500;
+}
+
+footer a:hover {
+	color: var(--link-hover-color);
+	text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.container {
+		padding: 0;
+		max-width: 100vw;
+	}
+
+	.grid {
+		grid-template-columns: 1fr;
+	}
+	
+	.header h1 {
+		font-size: 2rem;
+	}
+	
+	.main-content {
+		padding: 1rem;
+	}
+	
+	.step {
+		padding: 1rem;
+	}
+
+	.action-buttons {
+		flex-direction: column;
+	}
+	
+	.action-buttons button {
+		width: 100%;
+	}
+}
