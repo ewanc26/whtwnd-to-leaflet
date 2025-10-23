@@ -1,4 +1,11 @@
-// Conversion utilities ported from the original script.js and typed for TS/Svelte use
+// Conversion utilities using improved markdown parser
+import { parseMarkdownToBlocks } from './markdown-parser';
+import type { 
+	LeafletDocumentRecord, 
+	LeafletPublicationRecord, 
+	WhiteWindEntry,
+	LeafletBlock
+} from './types';
 
 const BASE32_SORTABLE = '234567abcdefghijklmnopqrstuvwxyz';
 
@@ -31,232 +38,118 @@ export function hexToRgb(hex: string) {
 		: null;
 }
 
-export function convertBlobUrlToAtUri(url: string, did: string) {
-	const blobUrlRegex = /xrpc\/com\.atproto\.sync\.getBlob\?did=([^&]+)&cid=([^&\s]+)/;
-	const match = url.match(blobUrlRegex);
+/**
+ * Create a Leaflet publication record
+ */
+export function createPublicationRecord(
+	name: string,
+	authorDid: string,
+	options: {
+		basePath?: string;
+		description?: string;
+		showInDiscover?: boolean;
+		showComments?: boolean;
+		primaryColor?: string;
+		backgroundColor?: string;
+		pageBackground?: string;
+		showPageBackground?: boolean;
+	} = {}
+): { rkey: string; record: LeafletPublicationRecord } {
+	const rkey = generateTID();
+	
+	// Convert hex colors to RGB
+	const primaryRgb = options.primaryColor ? hexToRgb(options.primaryColor) : null;
+	const backgroundRgb = options.backgroundColor ? hexToRgb(options.backgroundColor) : null;
+	const pageBackgroundRgb = options.pageBackground ? hexToRgb(options.pageBackground) : null;
 
-	if (match) {
-		const [, extractedDid, cid] = match;
-		return `at://${decodeURIComponent(extractedDid)}/com.whtwnd.blog.entry/${cid}`;
-	}
-
-	if (url.includes('bafk') || url.includes('bafyb')) {
-		const cidMatch = url.match(/(bafk[a-z0-9]+|bafyb[a-z0-9]+)/);
-	if (cidMatch) return `at://${did}/com.atproto.blob/${cidMatch[1]}`;
-	}
-
-	return url;
-}
-
-export function parseRichText(text: string, authorDid: string) {
-	let plaintext = text;
-	const facets: any[] = [];
-	const utf8Encoder = new TextEncoder();
-
-	const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-	let linkMatch: RegExpExecArray | null;
-	const linkReplacements: { start: number; end: number; text: string; uri: string }[] = [];
-	while ((linkMatch = linkRegex.exec(text)) !== null) {
-		const fullMatch = linkMatch[0];
-		const linkText = linkMatch[1];
-		const uri = linkMatch[2];
-		const convertedUri = convertBlobUrlToAtUri(uri, authorDid);
-
-		linkReplacements.push({ start: linkMatch.index, end: linkMatch.index + fullMatch.length, text: linkText, uri: convertedUri });
-	}
-
-	for (let i = linkReplacements.length - 1; i >= 0; i--) {
-		const rep = linkReplacements[i];
-		const byteStart = utf8Encoder.encode(plaintext.substring(0, rep.start)).length;
-		const byteEnd = byteStart + utf8Encoder.encode(rep.text).length;
-
-		facets.push({ index: { byteStart, byteEnd }, features: [{ $type: 'pub.leaflet.richtext.facet#link', uri: rep.uri }] });
-		plaintext = plaintext.substring(0, rep.start) + rep.text + plaintext.substring(rep.end);
-	}
-
-	const otherFacets: any[] = [];
-
-	let boldRegex = /\*\*([^*]+)\*\*/g;
-	let boldMatch: RegExpExecArray | null;
-	while ((boldMatch = boldRegex.exec(plaintext)) !== null) {
-		const start = utf8Encoder.encode(plaintext.substring(0, boldMatch.index)).length;
-		const end = start + utf8Encoder.encode(boldMatch[1]).length;
-		otherFacets.push({ index: { byteStart: start, byteEnd: end }, features: [{ $type: 'pub.leaflet.richtext.facet#bold' }] });
-	}
-
-	let italicRegex = /(?<!\*)\*([^*]+)\*(?!\*)/g;
-	let italicMatch: RegExpExecArray | null;
-	while ((italicMatch = italicRegex.exec(plaintext)) !== null) {
-		const start = utf8Encoder.encode(plaintext.substring(0, italicMatch.index)).length;
-		const end = start + utf8Encoder.encode(italicMatch[1]).length;
-		otherFacets.push({ index: { byteStart: start, byteEnd: end }, features: [{ $type: 'pub.leaflet.richtext.facet#italic' }] });
-	}
-
-	let codeRegex = /`([^`]+)`/g;
-	let codeMatch: RegExpExecArray | null;
-	while ((codeMatch = codeRegex.exec(plaintext)) !== null) {
-		const start = utf8Encoder.encode(plaintext.substring(0, codeMatch.index)).length;
-		const end = start + utf8Encoder.encode(codeMatch[1]).length;
-		otherFacets.push({ index: { byteStart: start, byteEnd: end }, features: [{ $type: 'pub.leaflet.richtext.facet#code' }] });
-	}
-
-	const allFacets = [...facets, ...otherFacets];
-	allFacets.sort((a, b) => a.index.byteStart - b.index.byteStart);
-
-	plaintext = plaintext.replace(boldRegex, '$1');
-	plaintext = plaintext.replace(italicRegex, '$1');
-	plaintext = plaintext.replace(codeRegex, '$1');
-
-	return { plaintext, facets: allFacets.length > 0 ? allFacets : undefined };
-}
-
-export function parseMarkdownToBlocks(content: string, authorDid: string) {
-	const blocks: any[] = [];
-	const lines = content.split('\n');
-	let currentBlock = '';
-	let blockType: string = 'text';
-
-	function finishCurrent() {
-		if (!currentBlock.trim()) return;
-		const { plaintext, facets } = parseRichText(currentBlock.trim(), authorDid);
-		blocks.push(createBlock(blockType, plaintext, authorDid, { facets }));
-		currentBlock = '';
-		blockType = 'text';
-	}
-
-	for (let i = 0; i < lines.length; i++) {
-		const line = lines[i];
-
-		// Header
-		if (line.startsWith('#')) {
-			if (currentBlock.trim()) {
-				const { plaintext, facets } = parseRichText(currentBlock.trim(), authorDid);
-				blocks.push(createBlock(blockType, plaintext, authorDid, { facets }));
-				currentBlock = '';
-			}
-			const levelMatch = line.match(/^#+/);
-			const level = levelMatch ? levelMatch[0].length : 1;
-			const text = line.replace(/^#+\s*/, '');
-			const { plaintext, facets } = parseRichText(text, authorDid);
-			blocks.push(createBlock('header', plaintext, authorDid, { level, facets }));
-			continue;
-		}
-
-		if (line.match(/^[-*_]{3,}$/)) {
-			finishCurrent();
-			blocks.push(createBlock('horizontalRule', '', authorDid));
-			continue;
-		}
-
-		if (line.startsWith('```')) {
-			if (blockType === 'code') {
-				blocks.push(createBlock('code', currentBlock, authorDid, { language: 'javascript' }));
-				currentBlock = '';
-				blockType = 'text';
-			} else {
-				if (currentBlock.trim()) {
-					const { plaintext, facets } = parseRichText(currentBlock.trim(), authorDid);
-					blocks.push(createBlock(blockType, plaintext, authorDid, { facets }));
-					currentBlock = '';
+	const record: LeafletPublicationRecord = {
+		$type: 'pub.leaflet.publication',
+		name,
+		...(options.basePath && { base_path: options.basePath }),
+		...(options.description && { description: options.description }),
+		preferences: {
+			showInDiscover: options.showInDiscover ?? true,
+			showComments: options.showComments ?? true
+		},
+		theme: {
+			...(primaryRgb && {
+				primary: {
+					$type: 'pub.leaflet.theme.color#rgb',
+					...primaryRgb
 				}
-				blockType = 'code';
-				currentBlock = '';
-			}
-			continue;
+			}),
+			...(backgroundRgb && {
+				backgroundColor: {
+					$type: 'pub.leaflet.theme.color#rgb',
+					...backgroundRgb
+				}
+			}),
+			...(pageBackgroundRgb && {
+				pageBackground: {
+					$type: 'pub.leaflet.theme.color#rgb',
+					...pageBackgroundRgb
+				}
+			}),
+			showPageBackground: options.showPageBackground ?? false
 		}
+	};
 
-		if (line.startsWith('>')) {
-			finishCurrent();
-			blockType = 'blockquote';
-			currentBlock = line.replace(/^>\s*/, '') + '\n';
-			finishCurrent();
-			continue;
-		}
-
-		const imgMatch = line.match(/!\[([^\]]*)\]\(([^)]+)\)/);
-		if (imgMatch) {
-			if (currentBlock.trim()) {
-				const { plaintext, facets } = parseRichText(currentBlock.trim(), authorDid);
-				blocks.push(createBlock(blockType, plaintext, authorDid, { facets }));
-				currentBlock = '';
-			}
-			const [, alt, src] = imgMatch;
-			const convertedSrc = convertBlobUrlToAtUri(src, authorDid);
-			const { plaintext, facets } = parseRichText(`[Image: ${alt || 'Image'}] (${convertedSrc})`, authorDid);
-			blocks.push(createBlock('text', plaintext, authorDid, { facets }));
-			blockType = 'text';
-			continue;
-		}
-
-		if (!line.trim()) {
-			finishCurrent();
-			continue;
-		}
-
-		if (blockType !== 'text' && blockType !== 'blockquote' && blockType !== 'code') {
-			finishCurrent();
-			blockType = 'text';
-		}
-
-		currentBlock += line + '\n';
-	}
-
-	finishCurrent();
-
-	return blocks.length > 0 ? blocks : [createBlock('text', content, authorDid)];
+	return { rkey, record };
 }
 
-function createBlock(type: string, content: string, authorDid: string, options: any = {}) {
-	const block: any = { block: {} };
+/**
+ * Convert a WhiteWind entry to a Leaflet document record
+ */
+export function convertEntryToDocument(
+	entry: WhiteWindEntry,
+	publicationUri: string,
+	authorDid: string
+): { rkey: string; record: LeafletDocumentRecord } {
+	const content = entry.value?.content || entry.content || '';
+	const title = entry.value?.title || entry.title || 'Untitled Post';
+	const subtitle = entry.value?.subtitle || entry.subtitle;
+	const createdAt = entry.value?.createdAt || entry.createdAt;
 
-	switch (type) {
-		case 'header':
-			block.block = {
-				$type: 'pub.leaflet.blocks.header',
-				level: options.level || 1,
-				plaintext: content,
-				...(options.facets && { facets: options.facets })
-			};
-			break;
-		case 'blockquote':
-			block.block = { $type: 'pub.leaflet.blocks.blockquote', plaintext: content, ...(options.facets && { facets: options.facets }) };
-			break;
-		case 'code':
-			block.block = { $type: 'pub.leaflet.blocks.code', plaintext: content, language: options.language || 'javascript' };
-			break;
-		case 'horizontalRule':
-			block.block = { $type: 'pub.leaflet.blocks.horizontalRule' };
-			break;
-		default:
-			block.block = { $type: 'pub.leaflet.blocks.text', plaintext: content, ...(options.facets && { facets: options.facets }) };
+	if (!content) {
+		throw new Error('WhiteWind entry is missing a "content" field');
 	}
-	return block;
+
+	// Parse markdown to blocks
+	const blockTypes = parseMarkdownToBlocks(content, authorDid);
+	
+	// Wrap blocks in the proper structure
+	const blocks: LeafletBlock[] = blockTypes.map(blockType => ({
+		$type: 'pub.leaflet.pages.linearDocument#block' as const,
+		block: blockType.block
+	}));
+
+	const rkey = generateTID();
+
+	const record: LeafletDocumentRecord = {
+		$type: 'pub.leaflet.document',
+		title,
+		...(subtitle && { description: subtitle }),
+		author: authorDid,
+		publication: publicationUri,
+		...(createdAt && { publishedAt: createdAt }),
+		pages: [
+			{
+				$type: 'pub.leaflet.pages.linearDocument',
+				blocks
+			}
+		]
+	};
+
+	return { rkey, record };
 }
 
-export function convertEntriesToLeaflet(publication: any, entries: any[], authorDid: string) {
-	const documentRecords = entries.map((entry: any, idx: number) => {
-		const rkey = generateTID();
-		const content = entry.value?.content || entry.content || entry.body || '';
-		const title = entry.value?.title || entry.title || entry.name;
-		const subtitle = entry.value?.subtitle || entry.subtitle;
-		const createdAt = entry.value?.createdAt || entry.createdAt;
-
-		if (!content) {
-			throw new Error('One or more WhiteWind entries is missing a "content" field');
-		}
-		const blocks = parseMarkdownToBlocks(content, authorDid);
-		const publicationUri = `at://${authorDid}/pub.leaflet.publication/${publication.rkey}`;
-
-		return {
-			$type: 'pub.leaflet.document',
-			title: title || 'Untitled Post',
-			...(subtitle && { description: subtitle }),
-			author: authorDid,
-			publication: publicationUri,
-			...(createdAt && { publishedAt: createdAt }),
-			pages: [{ $type: 'pub.leaflet.pages.linearDocument', blocks }]
-		};
-	});
-
-	return documentRecords;
+/**
+ * Convert multiple WhiteWind entries to Leaflet documents
+ */
+export function convertEntriesToDocuments(
+	entries: WhiteWindEntry[],
+	publicationUri: string,
+	authorDid: string
+): Array<{ rkey: string; record: LeafletDocumentRecord }> {
+	return entries.map(entry => convertEntryToDocument(entry, publicationUri, authorDid));
 }

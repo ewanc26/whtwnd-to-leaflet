@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { isLoggedIn, refreshSession } from '$lib/auth/auth';
+	import { isLoggedIn, resumeSession } from '$lib/auth/atproto';
 	import '../lib/styles.css';
 
 	onMount(async () => {
@@ -9,8 +9,12 @@
 			goto('/login');
 		} else {
 			try {
-				await refreshSession();
-				goto('/converter');
+				const resumed = await resumeSession();
+				if (resumed) {
+					goto('/converter');
+				} else {
+					goto('/login');
+				}
 			} catch {
 				goto('/login');
 			}
@@ -34,11 +38,11 @@
 			</div>
 
 			<div class="output-card">
-				<h3>ℹ️ What’s Happening</h3>
+				<h3>ℹ️ What's Happening</h3>
 				<ul style="margin-left: 1.5rem; margin-top: 0.5rem; line-height: 1.8;">
 					<li><strong>Checking Login:</strong> Verifying your AT Protocol session.</li>
 					<li><strong>Refreshing Session:</strong> Ensuring your authentication token is valid.</li>
-					<li><strong>Redirecting:</strong> You’ll be taken to the converter once ready.</li>
+					<li><strong>Redirecting:</strong> You'll be taken to the converter once ready.</li>
 				</ul>
 			</div>
 		</div>
@@ -46,10 +50,17 @@
 </div>
 
 <footer>
-	<p>Built by <a href="https://ewancroft.uk" target="_blank" rel="noopener">Ewan</a> • 
-	<a href="https://github.com/ewanc26/whtwnd-to-leaflet" target="_blank" rel="noopener">Source Code</a> (GPL-3.0)</p>
-	<p>Not affiliated with <a href="https://whtwnd.com" target="_blank" rel="noopener">WhiteWind</a> or 
-	<a href="https://leaflet.pub" target="_blank" rel="noopener">Leaflet</a>.</p>
+	<p>
+		Built by <a href="https://ewancroft.uk" target="_blank" rel="noopener">Ewan</a> •
+		<a href="https://github.com/ewanc26/whtwnd-to-leaflet" target="_blank" rel="noopener"
+			>Source Code</a
+		>
+		(GPL-3.0)
+	</p>
+	<p>
+		Not affiliated with <a href="https://whtwnd.com" target="_blank" rel="noopener">WhiteWind</a>
+		or <a href="https://leaflet.pub" target="_blank" rel="noopener">Leaflet</a>.
+	</p>
 </footer>
 
 <style>

@@ -1,0 +1,15 @@
+{
+	"client_id": "https://converter.ewancroft.uk/oauth/client-metadata.json",
+	"client_name": "WhiteWind to Leaflet Converter",
+	"client_uri": "https://converter.ewancroft.uk",
+	"logo_uri": "https://converter.ewancroft.uk/favicon.svg",
+	"tos_uri": "https://converter.ewancroft.uk/terms",
+	"policy_uri": "https://converter.ewancroft.uk/policy",
+	"redirect_uris": ["https://converter.ewancroft.uk/oauth/callback"],
+	"scope": "atproto transition:generic",
+	"grant_types": ["authorization_code", "refresh_token"],
+	"response_types": ["code"],
+	"application_type": "web",
+	"token_endpoint_auth_method": "none",
+	"dpop_bound_access_tokens": true
+}
