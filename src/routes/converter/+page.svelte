@@ -7,8 +7,8 @@
 		getCurrentUserHandle,
 		fetchWhiteWindEntries,
 		logout,
-		resumeOAuthSession
-	} from '$lib/auth/atproto-oauth';
+		resumeSession
+	} from '$lib/auth/atproto';
 	import { 
 		createPublicationRecord,
 		convertEntriesToDocuments
@@ -47,7 +47,7 @@
 	onMount(async () => {
 		// Try to resume session first
 		if (!isLoggedIn()) {
-			const resumed = await resumeOAuthSession();
+			const resumed = await resumeSession();
 			if (!resumed) {
 				goto('/login');
 				return;
@@ -342,35 +342,35 @@ Documents: ${documentRecords.length}
 					</div>
 
 					<div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-					<button class="btn-primary" on:click={publishToAtProto} disabled={publishing}>
-					  {#if publishing}🚀 Publishing...{:else}🚀 Publish to AT Protocol{/if}
-					</button>
-					<button class="btn-secondary" on:click={downloadZip}>
-						⬇️ Download ZIP Package
-					</button>
-				</div>
+						<button class="btn-primary" on:click={publishToAtProto} disabled={publishing}>
+							{#if publishing}🚀 Publishing...{:else}🚀 Publish to AT Protocol{/if}
+						</button>
+						<button class="btn-secondary" on:click={downloadZip}>
+							⬇️ Download ZIP Package
+						</button>
+					</div>
 
-				{#if publishResult}
-					{#if publishResult.success}
-						<div class="success" style="margin-bottom: 1.5rem;">
-							✅ {publishResult.message}
-							{#if publishResult.errors && publishResult.errors.length > 0}
-								<details style="margin-top: 0.5rem;">
-									<summary style="cursor: pointer; font-weight: 600;">View Errors</summary>
-									<ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
-										{#each publishResult.errors as err}
-											<li><strong>{err.rkey}:</strong> {err.error}</li>
-										{/each}
-									</ul>
-								</details>
-							{/if}
-						</div>
-					{:else}
-						<div class="warning" style="margin-bottom: 1.5rem;">
-							❌ {publishResult.message}
-						</div>
+					{#if publishResult}
+						{#if publishResult.success}
+							<div class="success" style="margin-bottom: 1.5rem;">
+								✅ {publishResult.message}
+								{#if publishResult.errors && publishResult.errors.length > 0}
+									<details style="margin-top: 0.5rem;">
+										<summary style="cursor: pointer; font-weight: 600;">View Errors</summary>
+										<ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+											{#each publishResult.errors as err}
+												<li><strong>{err.rkey}:</strong> {err.error}</li>
+											{/each}
+										</ul>
+									</details>
+								{/if}
+							</div>
+						{:else}
+							<div class="warning" style="margin-bottom: 1.5rem;">
+								❌ {publishResult.message}
+							</div>
+						{/if}
 					{/if}
-				{/if}
 
 					<div class="output-card">
 						<h3>Publication Record</h3>

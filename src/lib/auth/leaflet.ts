@@ -1,9 +1,9 @@
-// Service for publishing to Leaflet using OAuth
+// Service for publishing to Leaflet using password auth
 import {
 	createRecord,
 	putRecord,
 	getCurrentUserDid
-} from './atproto-oauth';
+} from './atproto';
 import type {
 	LeafletPublicationRecord,
 	LeafletDocumentRecord

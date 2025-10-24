@@ -1,30 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { initializeOAuth, startOAuthLogin, resumeOAuthSession } from '$lib/auth/atproto-oauth';
-
-	let handle = '';
+	import { login } from '$lib/auth/atproto';
+	
+	let identifier = '';
+	let password = '';
 	let loading = false;
 	let errorMessage = '';
-	let checkingSession = true;
-
-	onMount(async () => {
-		// Initialize OAuth configuration
-		initializeOAuth();
-
-		// Try to resume existing session
-		const resumed = await resumeOAuthSession();
-		if (resumed) {
-			goto('/converter');
-			return;
-		}
-
-		checkingSession = false;
-	});
 
 	async function handleLogin() {
-		if (!handle) {
-			errorMessage = 'Please enter your handle';
+		if (!identifier || !password) {
+			errorMessage = 'Please enter both identifier and password';
 			return;
 		}
 
@@ -32,11 +18,12 @@
 		errorMessage = '';
 
 		try {
-			// Start OAuth flow (this will redirect)
-			await startOAuthLogin(handle);
+			await login(identifier, password);
+			goto('/converter');
 		} catch (error: any) {
 			console.error('Login failed:', error);
-			errorMessage = error.message || 'Failed to start login. Please check your handle.';
+			errorMessage = error.message || 'Login failed. Please check your credentials.';
+		} finally {
 			loading = false;
 		}
 	}
@@ -54,86 +41,90 @@
 	</header>
 
 	<main class="main-content">
-		{#if checkingSession}
-			<div class="step" style="text-align: center; padding: 3rem;">
-				<div class="spinner"></div>
-				<p style="margin-top: 1rem; font-size: 1.1rem;">Checking for existing session...</p>
+		<div class="step">
+			<h2><span class="step-number">🔐</span>Sign In</h2>
+			<p style="opacity: 0.8; margin-bottom: 1.5rem;">
+				Sign in with your AT Protocol credentials (Bluesky account)
+			</p>
+
+			{#if errorMessage}
+				<div class="warning" style="margin-bottom: 1.5rem;">
+					<strong>⚠️ {errorMessage}</strong>
+				</div>
+			{/if}
+
+			<form on:submit={handleSubmit}>
+				<div class="form-group">
+					<label for="identifier">Handle or Email</label>
+					<input
+						id="identifier"
+						bind:value={identifier}
+						type="text"
+						placeholder="your-handle.bsky.social"
+						disabled={loading}
+						autocomplete="username"
+					/>
+				</div>
+
+				<div class="form-group">
+					<label for="password">Password or App Password</label>
+					<input
+						id="password"
+						bind:value={password}
+						type="password"
+						placeholder="••••••••••••••••"
+						disabled={loading}
+						autocomplete="current-password"
+					/>
+					<p style="font-size: 0.9rem; opacity: 0.7; margin-top: 0.5rem;">
+						<strong>Tip:</strong> Use an
+						<a
+							href="https://bsky.app/settings/app-passwords"
+							target="_blank"
+							rel="noopener"
+							style="text-decoration: underline;"
+						>
+							app password
+						</a>
+						for better security
+					</p>
+				</div>
+
+				<button class="btn-primary" type="submit" disabled={loading}>
+					{#if loading}
+						<span class="spinner-inline"></span>
+						Signing in...
+					{:else}
+						Sign In
+					{/if}
+				</button>
+			</form>
+
+			<div class="output-card" style="margin-top: 2rem; background: #f0f9ff; border-left: 4px solid #0ea5e9;">
+				<h3 style="margin-top: 0;">ℹ️ About This Tool</h3>
+				<ul style="margin-left: 1.5rem; line-height: 1.8; margin-bottom: 0;">
+					<li>This tool converts your WhiteWind blog entries to Leaflet format</li>
+					<li>Your PDS is automatically detected using microcosm.blue's slingshot service</li>
+					<li>Your credentials are only used to authenticate with AT Protocol</li>
+					<li>All conversion happens locally in your browser</li>
+					<li>Records are published directly to your AT Protocol repository</li>
+					<li>No data is stored on our servers</li>
+				</ul>
 			</div>
-		{:else}
-			<div class="step">
-				<h2><span class="step-number">🔐</span>Sign In with OAuth</h2>
-				<p style="opacity: 0.8; margin-bottom: 1.5rem;">
-					Sign in securely using OAuth. You'll be redirected to your PDS to authorize this
-					application.
+
+			<div class="output-card" style="margin-top: 1.5rem; background: #fffbeb; border-left: 4px solid #f59e0b;">
+				<h3 style="margin-top: 0;">🔒 Security Recommendation</h3>
+				<p style="margin-bottom: 0.5rem;">
+					For better security, we recommend using an <strong>App Password</strong> instead of your main account password.
 				</p>
-
-				{#if errorMessage}
-					<div class="warning" style="margin-bottom: 1.5rem;">
-						<strong>⚠️ {errorMessage}</strong>
-					</div>
-				{/if}
-
-				<form on:submit={handleSubmit}>
-					<div class="form-group">
-						<label for="handle">Your Handle</label>
-						<input
-							id="handle"
-							bind:value={handle}
-							type="text"
-							placeholder="yourhandle.bsky.social"
-							disabled={loading}
-							autocomplete="username"
-						/>
-						<p style="font-size: 0.9rem; opacity: 0.7; margin-top: 0.5rem;">
-							Enter your Bluesky or AT Protocol handle
-						</p>
-					</div>
-
-					<button class="btn-primary" type="submit" disabled={loading}>
-						{#if loading}
-							<span class="spinner-inline"></span>
-							Redirecting to authorization...
-						{:else}
-							Sign In with OAuth
-						{/if}
-					</button>
-				</form>
-
-				<div
-					class="output-card"
-					style="margin-top: 2rem; background: #f0f9ff; border-left: 4px solid #0ea5e9;"
-				>
-					<h3 style="margin-top: 0;">ℹ️ About OAuth Authentication</h3>
-					<ul style="margin-left: 1.5rem; line-height: 1.8; margin-bottom: 0;">
-						<li>
-							OAuth is the secure, recommended way to sign in to AT Protocol applications
-						</li>
-						<li>You'll be redirected to your PDS (Personal Data Server) to authorize access</li>
-						<li>
-							Your password never passes through this application - only secure authorization
-							tokens
-						</li>
-						<li>Sessions are stored securely in your browser and automatically refresh</li>
-						<li>You can revoke access at any time from your PDS settings</li>
-						<li>No data is stored on our servers - everything happens in your browser</li>
-					</ul>
-				</div>
-
-				<div
-					class="output-card"
-					style="margin-top: 1.5rem; background: #fffbeb; border-left: 4px solid #f59e0b;"
-				>
-					<h3 style="margin-top: 0;">🔒 Privacy & Security</h3>
-					<ul style="margin-left: 1.5rem; line-height: 1.8; margin-bottom: 0;">
-						<li>This tool converts your WhiteWind blog entries to Leaflet format</li>
-						<li>All conversion happens locally in your browser</li>
-						<li>Records are published directly to your AT Protocol repository</li>
-						<li>No intermediary servers store your data or credentials</li>
-						<li>Open source - you can verify the code on GitHub</li>
-					</ul>
-				</div>
+				<ol style="margin-left: 1.5rem; line-height: 1.8; margin-bottom: 0;">
+					<li>Go to <a href="https://bsky.app/settings/app-passwords" target="_blank" rel="noopener" style="text-decoration: underline;">Bluesky Settings → App Passwords</a></li>
+					<li>Create a new app password (e.g., "WhiteWind Converter")</li>
+					<li>Copy the generated password</li>
+					<li>Use it to sign in here instead of your main password</li>
+				</ol>
 			</div>
-		{/if}
+		</div>
 	</main>
 </div>
 
@@ -154,16 +145,6 @@
 <style>
 	form {
 		max-width: 500px;
-	}
-
-	.spinner {
-		display: inline-block;
-		width: 3rem;
-		height: 3rem;
-		border: 3px solid var(--border-color);
-		border-top-color: var(--button-bg);
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
 	}
 
 	.spinner-inline {

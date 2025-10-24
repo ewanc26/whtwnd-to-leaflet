@@ -1,4 +1,4 @@
-// AT Protocol authentication using atcute
+// AT Protocol authentication using atcute with PDS resolution via Slingshot
 import { Client, CredentialManager, ok } from '@atcute/client';
 import type { AtpSessionData } from '@atcute/client';
 import type { Did, Nsid } from '@atcute/lexicons';
@@ -9,17 +9,46 @@ import type {} from '@atcute/whitewind';
 import type {} from '@atcute/bluesky';
 
 const SESSION_STORAGE_KEY = 'atp_session';
+const SLINGSHOT_URL = 'https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc';
 
 let credentialManager: CredentialManager | null = null;
 let client: Client | null = null;
 
 /**
+ * Resolve a handle to its PDS using microcosm.blue's slingshot service
+ */
+async function resolvePDS(identifier: string): Promise<string> {
+	try {
+		const response = await fetch(`${SLINGSHOT_URL}?identifier=${encodeURIComponent(identifier)}`);
+		
+		if (!response.ok) {
+			throw new Error(`Failed to resolve PDS for ${identifier}`);
+		}
+		
+		const data = await response.json();
+		
+		// Slingshot returns: { did, handle, pds, signing_key }
+		if (data.pds) {
+			console.log(`Resolved ${identifier} -> PDS: ${data.pds}, DID: ${data.did}`);
+			return data.pds;
+		}
+		
+		throw new Error('PDS not found in slingshot response');
+	} catch (error) {
+		console.error('Failed to resolve PDS:', error);
+		// Fallback to default bsky.social if slingshot fails
+		console.warn(`Falling back to https://bsky.social for ${identifier}`);
+		return 'https://bsky.social';
+	}
+}
+
+/**
  * Initialize or get the credential manager
  */
-function getCredentialManager(): CredentialManager {
+function getCredentialManager(service: string): CredentialManager {
 	if (!credentialManager) {
 		credentialManager = new CredentialManager({
-			service: 'https://bsky.social',
+			service,
 			onSessionUpdate: (session) => {
 				// Save session to localStorage
 				if (typeof window !== 'undefined') {
@@ -95,9 +124,15 @@ export function getCurrentUserHandle(): string | null {
 
 /**
  * Login with identifier and password
+ * Automatically resolves the PDS using microcosm.blue's slingshot
  */
 export async function login(identifier: string, password: string): Promise<void> {
-	const manager = getCredentialManager();
+	// Resolve the user's PDS first
+	const pds = await resolvePDS(identifier);
+	
+	console.log(`Resolved PDS for ${identifier}: ${pds}`);
+	
+	const manager = getCredentialManager(pds);
 	
 	await manager.login({
 		identifier,
@@ -119,7 +154,10 @@ export async function resumeSession(): Promise<boolean> {
 	
 	try {
 		const session: AtpSessionData = JSON.parse(sessionData);
-		const manager = getCredentialManager();
+		
+		// Resolve PDS for the session
+		const pds = await resolvePDS(session.handle);
+		const manager = getCredentialManager(pds);
 		
 		await manager.resume(session);
 		client = new Client({ handler: manager });
