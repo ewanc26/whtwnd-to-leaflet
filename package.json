@@ -28,7 +28,12 @@
 		"vite": "^7.0.4"
 	}
 	,"dependencies": {
+		"@atproto/api": "^0.13.16",
 		"jszip": "^3.10.1",
-		"file-saver": "^2.0.5"
+		"file-saver": "^2.0.5",
+		"unified": "^11.0.4",
+		"remark-parse": "^11.0.0",
+		"remark-gfm": "^4.0.0",
+		"mdast-util-to-string": "^4.0.0"
 	}
 }

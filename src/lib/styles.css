@@ -239,6 +239,15 @@ button:disabled {
 }
 
 /* Messages */
+.error {
+	background-color: var(--danger-bg, #fee);
+	border: 1px solid var(--danger-border, #fcc);
+	color: var(--danger-text, #c00);
+	padding: 1rem;
+	border-radius: 0;
+	margin-bottom: 1.5rem;
+}
+
 .warning {
 	background-color: var(--warning-bg);
 	border: 1px solid var(--warning-border);

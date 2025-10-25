@@ -1,58 +1,229 @@
 # whtwnd-to-leaflet
 
-A simple browser-based tool for converting WhiteWind blog entries into the Leaflet publication format. It helps migrate content, metadata, and themes from WhiteWind to Leaflet on the AT Protocol.
+A browser-based tool for converting WhiteWind blog entries into the Leaflet publication format. Migrate content, metadata, and themes from WhiteWind to Leaflet on the AT Protocol with automatic fetching and publishing capabilities.
 
-⚠️ **Experimental** — output is not guaranteed to be fully accurate yet.
+⚠️ **Now with Auto-Publishing!** - Log in to automatically fetch your WhiteWind entries and publish directly to Leaflet.
+
+---
+
+## ✨ Features
+
+### Core Conversion
+- **Remark-based Markdown Parsing** - Uses the robust `unified`/`remark` ecosystem for accurate parsing
+- **Proper ATProto Blob Handling** - Converts blob URLs to correct Leaflet image block format with `{ $type: 'blob', ref: { $link: 'cid' } }`
+- **Full Lexicon Compliance** - Strictly follows Leaflet lexicons for all block types
+- **Image Blocks** - Standalone images converted to `pub.leaflet.blocks.image` blocks with proper aspectRatio
+- **List Support** - Proper `pub.leaflet.blocks.unorderedList` with nested list items
+- **Rich Text Facets** - Preserves bold, italic, code, and links with proper UTF-8 byte offsets
+
+### New Auto-Publishing Features
+- **AT Protocol Authentication** - Secure login with app passwords
+- **Auto-Fetch WhiteWind Entries** - Automatically retrieves all your WhiteWind blog posts
+- **Direct Publishing** - Publish converted entries directly to Leaflet without manual file uploads
+- **Progress Tracking** - Real-time progress bar showing publication status
+- **Manual Mode** - Still supports manual JSON paste for offline conversion
+
+### Other Features
+- **Add to Existing Publications** - Can add converted posts to an existing Leaflet publication
+- **Metadata Cleanup** - Only preserves Leaflet-compatible metadata, strips WhiteWind-specific fields
+- **ZIP Export** - Download all converted files as a ZIP archive
 
 ---
 
 ## How It Works
 
-The app is a single-page web tool (built with **SvelteKit + TypeScript + Tailwind** on Svelte 5) that runs entirely in the browser. No backend is required. It produces a Leaflet-compatible **publication record** plus one or more **document records** from your WhiteWind entries.
+The app is a single-page web tool (built with **SvelteKit + TypeScript + Tailwind** on Svelte 5) that runs entirely in the browser. It produces Leaflet-compatible **publication record** plus one or more **document records** from your WhiteWind entries.
 
-The process involves three steps:
+### Two Modes of Operation
 
-1. **Publication Setup**  
-   Provide publication details such as name, description, base path, and AT Protocol DID. Configure preferences like enabling comments and whether to appear in the Leaflet Discover feed.
+#### Auto Mode (Recommended) 🚀
+1. **Login** - Authenticate with your AT Protocol handle and app password
+2. **Fetch** - Automatically retrieve all your WhiteWind entries
+3. **Configure** - Set up your publication details and theme
+4. **Convert** - Transform entries to Leaflet format
+5. **Publish** - Directly publish to your PDS with one click
 
-2. **Theme Configuration**  
-   Choose colours for the publication’s primary, background, and page background.
-
-3. **Entry Conversion**  
-   Paste a JSON export of WhiteWind entries (either an array or an object with `records`/`data`). The converter will:  
-   - **Parse Markdown** → transforms into Leaflet blocks (headers, text, blockquotes, code, images, horizontal rules).  
-   - **Convert AT-URIs** → changes WhiteWind blob/CID URLs into `at://` URIs where possible.  
-   - **Output JSON** → emits one publication record and document records (ZIP export supported).
+#### Manual Mode 📝
+1. **Publication Setup** - Choose to create new or add to existing publication
+2. **Theme Configuration** - Customize colors (if creating new publication)
+3. **Entry Conversion** - Paste WhiteWind JSON and convert
+4. **Download** - Export as ZIP or copy JSON
 
 ---
 
 ## Usage
 
-**Web app:**
+### Auto Mode (With Login)
 
-1. Fill out Publication Setup and Theme Configuration.  
-2. Paste your WhiteWind JSON entries into the text area. You can fetch them from your PDS with:
+1. **Log in** with your AT Protocol credentials:
+   - Enter your handle (e.g., `alice.bsky.social`) or DID
+   - Use an **app password** (never your main password!)
+   - Create app passwords in your AT Protocol client settings
+
+2. **Select Auto Mode** and click **Fetch My WhiteWind Entries**
+   - Your entries will be automatically retrieved from your PDS
+
+3. **Configure your publication**:
+   - Create new or add to existing publication
+   - Set publication name, description, and preferences
+   - Choose theme colors
+
+4. **Convert** your entries to Leaflet format
+
+5. **Publish** directly to AT Protocol with one click
+   - Progress bar shows real-time publishing status
+   - All records created automatically
+
+### Manual Mode (Without Login)
+
+1. Choose whether to create a new publication or add to an existing one
+2. Fill out the required fields (Publication Setup or Existing Rkey)
+3. If creating new, configure the theme
+4. Paste your WhiteWind JSON entries. You can fetch them from your PDS with:
 
 ```plaintext
-https\://\[pds domain]/xrpc/com.atproto.repo.listRecords?repo=\[did]\&collection=com.whtwnd.blog.entry
+https://[pds domain]/xrpc/com.atproto.repo.listRecords?repo=[did]&collection=com.whtwnd.blog.entry
 ```
 
-3. Enter your Author DID.  
-4. Click **Convert to Leaflet**.  
-5. Copy or download the generated JSON files, or use the ZIP export.
+5. Enter your Author DID and PDS URL
+6. Click **Convert to Leaflet**
+7. Download the ZIP export or manually upload using pdsls.dev
 
-### Importing into a PDS
+### Importing into a PDS (Manual Mode)
 
-When importing the converted records into a PDS you should follow these rules:
+When manually importing the converted records:
 
-- Use `pdsls.dev` and the ZIP export.
-- You’ll need to copy each document record individually; don’t change the autogenerated record key (`rkey`).
-- Only change the `rkey` for the one generated by the converter for the publication record itself.
+**For new publications:**
+- Use pdsls.dev and the ZIP export
+- Upload `00.json` first (the publication record) with your chosen rkey
+- Then upload each document record (`1.json`, `2.json`, etc.) individually
+- Don't change the autogenerated rkeys for documents
 
-**Local development:**
+**For existing publications:**
+- The ZIP will only contain document records (`0.json`, `1.json`, etc.)
+- Upload each document individually to your existing publication
+- Don't change the autogenerated rkeys
+
+---
+
+## Technical Details
+
+### Markdown Parsing
+
+The converter uses the `unified`/`remark` ecosystem for robust Markdown parsing:
+
+- **unified** - Core parser framework
+- **remark-parse** - Markdown parser
+- **remark-gfm** - GitHub Flavored Markdown support
+- **mdast-util-to-string** - AST utilities
+
+This provides:
+- Better edge case handling
+- Support for GFM features
+- Proper nested element parsing
+- Extensible with plugins
+
+### Leaflet Block Support
+
+Fully compliant with Leaflet lexicons:
+
+- ✅ **pub.leaflet.blocks.text** - Paragraphs with rich text facets
+- ✅ **pub.leaflet.blocks.header** - Headings (levels 1-6) with facets
+- ✅ **pub.leaflet.blocks.image** - Images with required aspectRatio
+- ✅ **pub.leaflet.blocks.code** - Code blocks with language
+- ✅ **pub.leaflet.blocks.blockquote** - Block quotes
+- ✅ **pub.leaflet.blocks.horizontalRule** - Horizontal rules
+- ✅ **pub.leaflet.blocks.unorderedList** - Lists with nested items
+
+### Rich Text Facets
+
+Inline formatting preserved with proper UTF-8 byte offsets:
+
+- **Bold** (`**text**`) → `pub.leaflet.richtext.facet#bold`
+- **Italic** (`*text*`) → `pub.leaflet.richtext.facet#italic`
+- **Code** (`` `text` ``) → `pub.leaflet.richtext.facet#code`
+- **Links** (`[text](url)`) → `pub.leaflet.richtext.facet#link`
+
+### Metadata Handling
+
+The converter **only preserves Leaflet-compatible metadata**:
+
+**Preserved:**
+- `title` - Post title
+- `description` - From WhiteWind's subtitle field
+- `publishedAt` - Original creation timestamp
+- `theme` - Visual theme
+
+**Discarded (WhiteWind-specific):**
+- `rkey` - WhiteWind record key (replaced with new TID)
+- `cid` - Content identifier
+- `value` - Wrapper object
+- `uri` - Original WhiteWind URI
+- `visibility` - Not in Leaflet document schema
+- Any other fields not in Leaflet's lexicon
+
+### Blob URL Conversion
+
+Handles two types of blob references:
+
+1. **XRPC getBlob URLs**: `xrpc/com.atproto.sync.getBlob?did=X&cid=Y`
+2. **Direct CID references**: URLs containing `bafk...` or `bafyb...`
+
+For standalone images, creates proper image blocks:
+
+```json
+{
+  "block": {
+    "$type": "pub.leaflet.blocks.image",
+    "image": {
+      "$type": "blob",
+      "ref": {
+        "$link": "bafkreiabc123..."
+      }
+    },
+    "aspectRatio": {
+      "width": 1920,
+      "height": 1080
+    },
+    "alt": "Image description"
+  }
+}
+```
+
+For inline images and blob links, converts to AT-URI format: `at://did/com.atproto.blob/cid`
+
+### Image Dimensions
+
+The converter attempts to fetch actual image dimensions for proper aspectRatio:
+
+1. Checks blob metadata if available
+2. Fetches and measures actual image if PDS URL provided
+3. Falls back to 512x512 if dimensions unavailable
+
+This ensures compliance with Leaflet's required `aspectRatio` field.
+
+### AT Protocol Authentication
+
+Uses `@atproto/api` for secure authentication:
+
+- Resolves handles/DIDs using Slingshot identity resolver
+- Supports app passwords (2FA-compatible)
+- Session management with localStorage
+- Automatic PDS URL resolution
+
+---
+
+## Local Development
+
+**Install dependencies:**
 
 ```bash
 npm install
+```
+
+**Run development server:**
+
+```bash
 npm run dev
 ```
 
@@ -69,17 +240,55 @@ npm run preview
 
 ## Files of Interest
 
-* `src/routes/+page.svelte` — main UI and form handling
-* `src/lib/convert.ts` — core conversion logic (TID generation, markdown → blocks, URL conversions)
-* `src/lib/styles.css`, `src/lib/variables.css` — styles and theme variables
-* `src/types/file-saver.d.ts` — small type declaration
+- `src/routes/+page.svelte` - Main UI with auth and publishing
+- `src/lib/convert.ts` - Core conversion logic with remark integration
+- `src/lib/auth.ts` - AT Protocol authentication and publishing
+- `src/lib/styles.css`, `src/lib/variables.css` - Styles and theme variables
+- `package.json` - Dependencies including unified/remark and @atproto/api
 
 ---
 
-## Development Notes
+## Migration Tips
 
-* Supports JSON arrays of entries or objects with `records`/`data` arrays.
-* Inline rich-text facets (links, bold, italic, code) are extracted when possible and attached to text blocks.
+For migrating ~86 posts from WhiteWind:
+
+### Using Auto Mode (Recommended)
+1. **Log in** with your AT Protocol credentials
+2. **Fetch all entries** automatically
+3. **Configure publication** settings
+4. **Convert and publish** in one go
+5. **Monitor progress** with the real-time progress bar
+
+### Using Manual Mode
+1. **Start with existing publication mode** - Use your existing Leaflet publication rkey
+2. **Process in batches** - Convert and upload 10-15 posts at a time
+3. **Review after conversion** - Check the first few converted posts for formatting issues
+4. **Iterate if needed** - The remark parser handles most cases, but custom formatting may need adjustment
+5. **Preserve timestamps** - Original publish dates are maintained automatically
+
+### Common Issues
+
+**Image dimensions missing:**
+- Make sure to provide your PDS URL
+- The converter will attempt to fetch actual dimensions
+- Falls back to 512x512 if unavailable
+
+**List formatting:**
+- WhiteWind lists are converted to proper Leaflet unorderedList blocks
+- Nested lists are supported with proper structure
+
+**Rich text facets:**
+- All inline formatting (bold, italic, code, links) is preserved
+- Byte offsets calculated automatically for UTF-8 compliance
+
+---
+
+## Security Notes
+
+- **Never use your main password** - Always create an app password
+- **App passwords** support 2FA and can be revoked individually
+- **Sessions stored locally** - Clear browser data to logout completely
+- **No server-side storage** - All processing happens in your browser
 
 ---
 
@@ -89,4 +298,43 @@ Licensed under **GPL 3.0**. See `/LICENSE` for details.
 
 ---
 
+## Credits
+
 **Project:** [ewanc26/whtwnd-to-leaflet](https://github.com/ewanc26/whtwnd-to-leaflet)
+
+Built with 🍃 by [Ewan](https://ewancroft.uk)
+
+Not affiliated with [WhiteWind](https://whtwnd.com) or [Leaflet](https://leaflet.pub).
+
+---
+
+## Changelog
+
+### v2.0.0 - Auto-Publishing Update
+
+**New Features:**
+- AT Protocol authentication with app passwords
+- Auto-fetch WhiteWind entries from your PDS
+- Direct publishing to Leaflet with progress tracking
+- Two modes: Auto (with login) and Manual (without login)
+
+**Improvements:**
+- Full Leaflet lexicon compliance
+- Proper `pub.leaflet.blocks.unorderedList` support
+- Improved image block handling with aspectRatio
+- Better error messages and user feedback
+- Real-time publishing progress
+
+**Bug Fixes:**
+- Removed invalid `visibility` field from documents
+- Fixed list conversion to use proper Leaflet structure
+- Improved blob URL detection and conversion
+- Better handling of missing image dimensions
+
+### v1.0.0 - Initial Release
+
+- Remark-based Markdown parsing
+- Proper ATProto blob handling
+- Image and text block conversion
+- ZIP export functionality
+- Add to existing publications
